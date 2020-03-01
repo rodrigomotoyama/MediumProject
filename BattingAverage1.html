@@ -374,51 +374,194 @@ summary {
 <p>I guess a first publication needs a short introduction, right? So here it goes. My name is Rodrigo, born and raised in Brazil since 1993, Japanese ancestry, baseball and math lover. I majored in Math for teachers (specific curriculum in Brazil’s universities.) I had been a math teacher for a year, did not enjoy the educational system, changed career to data analyst, with the specifical intent to write and work with baseball data analysis. I hope this little short piece is the begining of this. On this one I am just trying to practice my English and data analysis with R. And this is enough about me. Let’s talk about baseball (or some part of it at least).</p>
 <div id="batting-average-and-the-batting-champion" class="section level2">
 <h2>Batting Average and the Batting Champion</h2>
-<p>What does batting average even measure? How good a hitter is? A good hitter always has a high avg? Let’s dive into this. Batting average is one, if not the most known statistics of a player who is not a pithcer. It is so well known that there is a single prize in MLB for it, and it is called “batting champion”. It is a prize given to the player with the highest batting average in each league. Cool, right? If we have a single prize for it, then batting average should be hella important, shouldn’t it? Or at least it should say something about the value of a player with a high/low batting average.</p>
-<p>I see this statistic as one of those “it has always been like this, so it must be right” kind of thing, and this is funny because growing up playing baseball in Brazil, we had a prize in every competion for “the best hitter” which was given to the player with the highest batting average. Can we really say that? The best one is the one with the highest average? I am not saying that average is not important, although I don’t think it is, but we could have better names for these prizes.</p>
-<pre><code>## 
-## 
-## player      year    ab     avg     h   league_avg
-## ---------  -----  ----  ------  ----  -----------
-## Player B    2019   491   0.314   154        0.263
-## Player M    2019   470   0.291   137        0.263</code></pre>
-<p>Thanks to rotowire, we can take a look at the production of some players, and I have chose these two for us to play with. If we only cared about batting average, which one would you pick? If you know me, you chose player B because you thought I am trying to trick you, and you are right. But if you came here out of nowhere, you probably picked Player B and why shouldn’t you? More than 5 points above league avg and above .300, almost 20 more hits than player A, I mean how could you not? The more he hits the better, some may say.</p>
-<pre><code>## 
-## 
-## player            year    ab     avg     obp     slg     h   x2b   hr    bb    so
-## ---------------  -----  ----  ------  ------  ------  ----  ----  ---  ----  ----
-## Bryan Reynolds    2019   491   0.314   0.377   0.503   154    37   16    46   121
-## Mike Trout        2019   470   0.291   0.438   0.645   137    27   45   110   120</code></pre>
+<p>What does batting average even measure? How good a hitter is? A good hitter always has a high avg? Let’s dive into this. Batting average is one, if not the most known statistics of a player who is not a pitcher. It is so well known that there is a single prize in MLB for it, and it is called “batting champion”. It is a prize given to the player with the highest batting average in each league. Cool, right? If we have a single prize for it, then batting average should be hella important, shouldn’t it? Or at least it should say something about the value of a player with a high/low batting average. I see this statistic as one of those “it has always been like this, so it must be right” kind of thing, and this is funny because growing up playing baseball in Brazil, we had a prize in every competition for “the best hitter” which was given to the player with the highest batting average. Can we really say that? The best one is the one with the highest average? I am not saying that average is not important, although I don’t think it is, we could have better names for these prizes.</p>
+<table>
+<thead>
+<tr class="header">
+<th align="left">player</th>
+<th align="right">year</th>
+<th align="right">ab</th>
+<th align="right">avg</th>
+<th align="right">h</th>
+<th align="right">league_avg</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">Player B</td>
+<td align="right">2019</td>
+<td align="right">491</td>
+<td align="right">0.314</td>
+<td align="right">154</td>
+<td align="right">0.263</td>
+</tr>
+<tr class="even">
+<td align="left">Player M</td>
+<td align="right">2019</td>
+<td align="right">470</td>
+<td align="right">0.291</td>
+<td align="right">137</td>
+<td align="right">0.263</td>
+</tr>
+</tbody>
+</table>
+<p>Thanks to rotowire, we can take a look at the production of some players, and I have chose these two for us to play with. If we only cared about batting average, which one would you pick? If you know me, you chose player M because you thought I am trying to trick you, and you are right. However, if you came here out of nowhere, you probably picked Player B and why shouldn’t you? More than 5 points above league avg and above .300, almost 20 more hits than player M, I mean how could you not? The more he hits the better, some may say.</p>
+<table>
+<thead>
+<tr class="header">
+<th align="left">player</th>
+<th align="right">year</th>
+<th align="right">ab</th>
+<th align="right">avg</th>
+<th align="right">h</th>
+<th align="right">league_avg</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">Bryan Reynolds</td>
+<td align="right">2019</td>
+<td align="right">491</td>
+<td align="right">0.314</td>
+<td align="right">154</td>
+<td align="right">0.263</td>
+</tr>
+<tr class="even">
+<td align="left">Mike Trout</td>
+<td align="right">2019</td>
+<td align="right">470</td>
+<td align="right">0.291</td>
+<td align="right">137</td>
+<td align="right">0.263</td>
+</tr>
+</tbody>
+</table>
 <p>Well, you just chose Bryan Reynolds over Mike Trout. Yes, Mike Trout. And don’t get me wrong, Bryan Reynolds had one hell of a rookie season in 2019, but he is no Mike Trout, the AL MVP of 2019. Cool, right? And ok, that is just one comparison. But that is all it takes to prove that, high batting average does not mean a better hitter. It just means he had more hits over an amount of at bats, and it doesn’t even matter about the type of hit, it values singles and home runs as the same. So if you go 3 for 5 with 3 homers, and your friend goes 4 for 4 with 4 singles, guess who would get the title for “the best hitter” in Brazil’s little league, or who would be the “batting champion”? Yeah, the kid with 4 singles.</p>
 </div>
 <div id="conclusion" class="section level2">
 <h2>Conclusion</h2>
 <p>I could go on and on about why batting average should be canceled, and compare it to OBP (my personal favorite), SLG, OPS, WAR, Batting Runs, wOBA and so on. However, as this is my first piece, I will keep it short, because I want to finish this asap, and also because I am still on a basic level with R and I have a small amount of tools to work with. I will leave you folks with another examples where looking solely at avg would have failed you.</p>
-<pre><code>## 
-## 
-## player      year    ab     avg     h   league_avg
-## ---------  -----  ----  ------  ----  -----------
-## Player D    2015   615   0.333   205        0.266
-## Player H    2015   521   0.330   172        0.266</code></pre>
-<pre><code>## 
-## 
-## player      year    ab     avg     h   league_avg
-## ---------  -----  ----  ------  ----  -----------
-## Player D    2017   653   0.308   201        0.266
-## Player S    2017   597   0.281   168        0.266</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th align="left">player</th>
+<th align="right">year</th>
+<th align="right">ab</th>
+<th align="right">avg</th>
+<th align="right">h</th>
+<th align="right">league_avg</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">Player D</td>
+<td align="right">2015</td>
+<td align="right">615</td>
+<td align="right">0.333</td>
+<td align="right">205</td>
+<td align="right">0.266</td>
+</tr>
+<tr class="even">
+<td align="left">Player H</td>
+<td align="right">2015</td>
+<td align="right">521</td>
+<td align="right">0.330</td>
+<td align="right">172</td>
+<td align="right">0.266</td>
+</tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr class="header">
+<th align="left">player</th>
+<th align="right">year</th>
+<th align="right">ab</th>
+<th align="right">avg</th>
+<th align="right">h</th>
+<th align="right">league_avg</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">Player D</td>
+<td align="right">2017</td>
+<td align="right">653</td>
+<td align="right">0.308</td>
+<td align="right">201</td>
+<td align="right">0.266</td>
+</tr>
+<tr class="even">
+<td align="left">Player S</td>
+<td align="right">2017</td>
+<td align="right">597</td>
+<td align="right">0.281</td>
+<td align="right">168</td>
+<td align="right">0.266</td>
+</tr>
+</tbody>
+</table>
 <p>Wait for it…</p>
-<pre><code>## 
-## 
-## player          year    ab     avg     obp     slg     h   x2b   hr    bb    so
-## -------------  -----  ----  ------  ------  ------  ----  ----  ---  ----  ----
-## Dee Gordon      2015   615   0.333   0.359   0.418   205    24    4    25    91
-## Bryce Harper    2015   521   0.330   0.460   0.649   172    38   42   124   131</code></pre>
-<pre><code>## 
-## 
-## player               year    ab     avg     obp     slg     h   x2b   hr   bb    so
-## ------------------  -----  ----  ------  ------  ------  ----  ----  ---  ---  ----
-## Dee Gordon           2017   653   0.308   0.341   0.375   201    20    2   25    93
-## Giancarlo Stanton    2017   597   0.281   0.376   0.631   168    32   59   85   163</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th align="left">player</th>
+<th align="right">year</th>
+<th align="right">ab</th>
+<th align="right">avg</th>
+<th align="right">h</th>
+<th align="right">league_avg</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">Dee Gordon</td>
+<td align="right">2015</td>
+<td align="right">615</td>
+<td align="right">0.333</td>
+<td align="right">205</td>
+<td align="right">0.266</td>
+</tr>
+<tr class="even">
+<td align="left">Bryce Harper</td>
+<td align="right">2015</td>
+<td align="right">521</td>
+<td align="right">0.330</td>
+<td align="right">172</td>
+<td align="right">0.266</td>
+</tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr class="header">
+<th align="left">player</th>
+<th align="right">year</th>
+<th align="right">ab</th>
+<th align="right">avg</th>
+<th align="right">h</th>
+<th align="right">league_avg</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">Dee Gordon</td>
+<td align="right">2017</td>
+<td align="right">653</td>
+<td align="right">0.308</td>
+<td align="right">201</td>
+<td align="right">0.266</td>
+</tr>
+<tr class="even">
+<td align="left">Giancarlo Stanton</td>
+<td align="right">2017</td>
+<td align="right">597</td>
+<td align="right">0.281</td>
+<td align="right">168</td>
+<td align="right">0.266</td>
+</tr>
+</tbody>
+</table>
 </div>
 </div>
 

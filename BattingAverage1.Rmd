@@ -23,6 +23,7 @@ library(stringr)
 library(janitor)
 #library(gridExtra)
 library(grid)
+library(gt)
 MVP_MLB_2012_2019 <- function(dataFrame, column = "player"){
   #print('passou')
   for (j in seq(1:length(dataFrame[,as.character(column)]))){
@@ -77,13 +78,11 @@ avg_by_year <- combined_mlb_df_ab_300 %>%
 mlb_df_avg <- merge(combined_mlb_df_ab_300, avg_by_year, by = "year")
 
 ## Trout x Bryan Reynolds
-first_table_MB <- mlb_df_avg %>% select(player, year, ab, avg, h, league_avg) %>% 
+table_MB <- mlb_df_avg %>% select(player, year, ab, avg, h, league_avg) %>% 
   filter(year == 2019, player %in% c('Mike Trout', 'Bryan Reynolds')) %>%
   arrange(desc(avg))
-revealed_table_MB <- mlb_df_avg %>% select(player, year, ab, avg, obp, slg, h, x2b, hr, bb, so) %>% 
-  filter(year == 2019, player %in% c('Mike Trout', 'Bryan Reynolds')) %>%
-  arrange(desc(avg))
-first_table_hidden_MB <- first_table_MB
+revealed_table_MB <- table_MB
+first_table_hidden_MB <- table_MB
 first_table_hidden_MB[1, 'player'] <- 'Player B'
 first_table_hidden_MB[2, 'player'] <- 'Player M'
 first_table_hidden_MB <- first_table_hidden_MB %>% knitr::kable()
@@ -91,13 +90,11 @@ revealed_table_MB <- revealed_table_MB %>% knitr::kable()
 ## Trout x Bryan Reynolds
 
 ## Harper x Dee Gordon
-first_table_HG <- mlb_df_avg %>% select(player, year, ab, avg, h, league_avg) %>% 
+table_HG <- mlb_df_avg %>% select(player, year, ab, avg, h, league_avg) %>% 
   filter(year == 2015, player %in% c('Bryce Harper', 'Dee Gordon')) %>%
   arrange(desc(avg))
-revealed_table_HG <- mlb_df_avg %>% select(player, year, ab, avg, obp, slg, h, x2b, hr, bb, so) %>% 
-  filter(year == 2015, player %in% c('Bryce Harper', 'Dee Gordon')) %>%
-  arrange(desc(avg))
-first_table_hidden_HG <- first_table_HG
+revealed_table_HG <- table_HG
+first_table_hidden_HG <- table_HG
 first_table_hidden_HG[1, 'player'] <- 'Player D'
 first_table_hidden_HG[2, 'player'] <- 'Player H'
 first_table_hidden_HG <- first_table_hidden_HG %>% knitr::kable()
@@ -105,13 +102,11 @@ revealed_table_HG <- revealed_table_HG %>% knitr::kable()
 ## Harper x Dee Gordon
 
 ## Stanton x Dee Gordon
-first_table_SG <- mlb_df_avg %>% select(player, year, ab, avg, h, league_avg) %>% 
+table_SG <- mlb_df_avg %>% select(player, year, ab, avg, h, league_avg) %>% 
   filter(year == 2017, player %in% c('Giancarlo Stanton', 'Dee Gordon')) %>%
   arrange(desc(avg))
-revealed_table_SG <- mlb_df_avg %>% select(player, year, ab, avg, obp, slg, h, x2b, hr, bb, so) %>% 
-  filter(year == 2017, player %in% c('Giancarlo Stanton', 'Dee Gordon')) %>%
-  arrange(desc(avg))
-first_table_hidden_SG <- first_table_SG
+revealed_table_SG <- table_SG
+first_table_hidden_SG <- table_SG
 first_table_hidden_SG[1, 'player'] <- 'Player D'
 first_table_hidden_SG[2, 'player'] <- 'Player S'
 first_table_hidden_SG <- first_table_hidden_SG %>% knitr::kable()
@@ -120,13 +115,13 @@ revealed_table_SG <- revealed_table_SG %>% knitr::kable()
 ```
    
 ```{r, echo = FALSE, include = TRUE}
-print(first_table_hidden_MB)
+first_table_hidden_MB 
 ```
 
 Thanks to rotowire, we can take a look at the production of some players, and I have chose these two for us to play with. If we only cared about batting average, which one would you pick? If you know me, you chose player M because you thought I am trying to trick you, and you are right. However, if you came here out of nowhere, you probably picked Player B and why shouldn't you? More than 5 points above league avg and above .300, almost 20 more hits than player M, I mean how could you not? The more he hits the better, some may say.
 
 ```{r, echo = FALSE, include = TRUE}
-print(revealed_table_MB)
+revealed_table_MB 
 ```
 
 Well, you just chose Bryan Reynolds over Mike Trout. Yes, Mike Trout. And don't get me wrong, Bryan Reynolds had one hell of a rookie season in 2019, but he is no Mike Trout, the AL MVP of 2019. 
@@ -136,21 +131,23 @@ Cool, right? And ok, that is just one comparison. But that is all it takes to pr
 I could go on and on about why batting average should be canceled, and compare it to OBP (my personal favorite), SLG, OPS, WAR, Batting Runs, wOBA and so on. However, as this is my first piece, I will keep it short, because I want to finish this asap, and also because I am still on a basic level with R and I have a small amount of tools to work with. I will leave you folks with another examples where looking solely at avg would have failed you.
 
 ```{r, echo = FALSE, include = TRUE}
-print(first_table_hidden_HG)
+first_table_hidden_HG 
 ```
 
+
 ```{r, echo = FALSE, include = TRUE}
-print(first_table_hidden_SG)
+first_table_hidden_SG 
 ```
 
 Wait for it...
 
 ```{r, echo = FALSE, include = TRUE}
-print(revealed_table_HG)
+revealed_table_HG 
 ```
 
+
 ```{r, echo = FALSE, include = TRUE}
-print(revealed_table_SG)
+revealed_table_SG 
 ```
 
 
