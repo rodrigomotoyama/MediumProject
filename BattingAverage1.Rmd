@@ -1,0 +1,161 @@
+---
+title: 'Batting Average: Should we cancel it?'
+author: "Rodrigo Motoyama"
+date: "25/02/2020"
+output:
+  html_document: default
+  pdf_document: default
+  word_document: default
+---
+# Introduction
+I guess a first publication needs a short introduction, right? So here it goes. My name is Rodrigo, born and raised in Brazil since 1993, Japanese ancestry, baseball and math lover. I majored in Math for teachers (specific curriculum in Brazil's universities.) I had been a math teacher for a year, did not enjoy the educational system, changed career to data analyst, with the specifical intent to write and work with baseball data analysis. I hope this little short piece is the begining of this. On this one I am just trying to practice my English and data analysis with R. And this is enough about me. Let's talk about baseball (or some part of it at least).
+
+## Batting Average and the Batting Champion
+What does batting average even measure? How good a hitter is? A good hitter always has a high avg? Let's dive into this. Batting average is one, if not the most known statistics of a player who is not a pitcher. It is so well known that there is a single prize in MLB for it, and it is called "batting champion". It is a prize given to the player with the highest batting average in each league. Cool, right? If we have a single prize for it, then batting average should be hella important, shouldn't it? Or at least it should say something about the value of a player with a high/low batting average.
+I see this statistic as one of those "it has always been like this, so it must be right" kind of thing, and this is funny because growing up playing baseball in Brazil, we had a prize in every competition for "the best hitter" which was given to the player with the highest batting average. Can we really say that? The best one is the one with the highest average? I am not saying that average is not important, although I don't think it is, we could have better names for these prizes.
+```{r echo = FALSE, resulta = 'asis', include=FALSE}
+library(dplyr)
+library(tidyr)
+library(tibble)
+library(abjData)
+library(readr)
+library(stringr)
+library(janitor)
+#library(gridExtra)
+library(grid)
+MVP_MLB_2012_2019 <- function(dataFrame, column = "player"){
+  #print('passou')
+  for (j in seq(1:length(dataFrame[,as.character(column)]))){
+    #print('passou')
+    if (i == 2012 & dataFrame[j,"player"] %in% c('Buster Posey', 'Miguel Cabrera')){
+      dataFrame[j, 'MVP'] <- T
+      #print(dataFrame)
+    }
+    else if (i == 2013 & dataFrame[j,as.character(column)] %in% c('Andrew McCutchen', 'Miguel Cabrera')){
+      dataFrame[j, 'MVP'] <- T
+    }
+    else if (i == 2014 & dataFrame[j,as.character(column)] %in% c('Clayton Kershaw', 'Mike Trout')){
+      dataFrame[j, 'MVP'] <- T
+    }
+    else if (i == 2015 & dataFrame[j,as.character(column)] %in% c('Bryce Harper', 'Josh Donaldson')){
+      dataFrame[j, 'MVP'] <- T
+    }
+    else if (i == 2016 & dataFrame[j,as.character(column)] %in% c('Kris Bryant', 'Mike Trout')){
+      dataFrame[j, 'MVP'] <- T
+    }
+    else if (i == 2017 & dataFrame[j,as.character(column)] %in% c('Giancarlo Stanton', 'Jose Altuve')){
+      dataFrame[j, 'MVP'] <- T
+    }
+    else if (i == 2018 & dataFrame[j,as.character(column)] %in% c('Christian Yelich', 'Mookie Betts')){
+      dataFrame[j, 'MVP'] <- T
+    }
+    else if (i == 2019 & dataFrame[j,as.character(column)] %in% c('Cody Bellinger', 'Mike Trout')){
+      dataFrame[j, 'MVP'] <- T
+    }
+    else{
+      dataFrame[j, 'MVP'] <- F
+    }  
+  }
+  return(dataFrame)
+}
+combined_mlb_df <- tibble()
+for (i in 2012:2019){
+  path_file <- paste('mlb-player-stats-Batters-', as.character(i), '.csv', sep='')
+  mlb_df <- read_csv(file = path_file)%>% clean_names()
+  df <- paste('mlb_batting_', as.character(i), sep='')
+  mlb_df <- cbind(year=i, mlb_df)
+  # MVP <- mlb_df %>% filter
+  mlb_df <- MVP_MLB_2012_2019(mlb_df)
+  combined_mlb_df <- rbind(combined_mlb_df, mlb_df)
+  assign(df, mlb_df)
+  # print(as.character(i))
+}
+combined_mlb_df_ab_300 <- combined_mlb_df %>% filter(ab>300)
+avg_by_year <- combined_mlb_df_ab_300 %>% 
+  group_by(year) %>% 
+  summarise(league_avg = round(mean(avg), digits = 3))
+mlb_df_avg <- merge(combined_mlb_df_ab_300, avg_by_year, by = "year")
+
+## Trout x Bryan Reynolds
+first_table_MB <- mlb_df_avg %>% select(player, year, ab, avg, h, league_avg) %>% 
+  filter(year == 2019, player %in% c('Mike Trout', 'Bryan Reynolds')) %>%
+  arrange(desc(avg))
+revealed_table_MB <- mlb_df_avg %>% select(player, year, ab, avg, obp, slg, h, x2b, hr, bb, so) %>% 
+  filter(year == 2019, player %in% c('Mike Trout', 'Bryan Reynolds')) %>%
+  arrange(desc(avg))
+first_table_hidden_MB <- first_table_MB
+first_table_hidden_MB[1, 'player'] <- 'Player B'
+first_table_hidden_MB[2, 'player'] <- 'Player M'
+first_table_hidden_MB <- first_table_hidden_MB %>% knitr::kable()
+revealed_table_MB <- revealed_table_MB %>% knitr::kable()
+## Trout x Bryan Reynolds
+
+## Harper x Dee Gordon
+first_table_HG <- mlb_df_avg %>% select(player, year, ab, avg, h, league_avg) %>% 
+  filter(year == 2015, player %in% c('Bryce Harper', 'Dee Gordon')) %>%
+  arrange(desc(avg))
+revealed_table_HG <- mlb_df_avg %>% select(player, year, ab, avg, obp, slg, h, x2b, hr, bb, so) %>% 
+  filter(year == 2015, player %in% c('Bryce Harper', 'Dee Gordon')) %>%
+  arrange(desc(avg))
+first_table_hidden_HG <- first_table_HG
+first_table_hidden_HG[1, 'player'] <- 'Player D'
+first_table_hidden_HG[2, 'player'] <- 'Player H'
+first_table_hidden_HG <- first_table_hidden_HG %>% knitr::kable()
+revealed_table_HG <- revealed_table_HG %>% knitr::kable()
+## Harper x Dee Gordon
+
+## Stanton x Dee Gordon
+first_table_SG <- mlb_df_avg %>% select(player, year, ab, avg, h, league_avg) %>% 
+  filter(year == 2017, player %in% c('Giancarlo Stanton', 'Dee Gordon')) %>%
+  arrange(desc(avg))
+revealed_table_SG <- mlb_df_avg %>% select(player, year, ab, avg, obp, slg, h, x2b, hr, bb, so) %>% 
+  filter(year == 2017, player %in% c('Giancarlo Stanton', 'Dee Gordon')) %>%
+  arrange(desc(avg))
+first_table_hidden_SG <- first_table_SG
+first_table_hidden_SG[1, 'player'] <- 'Player D'
+first_table_hidden_SG[2, 'player'] <- 'Player S'
+first_table_hidden_SG <- first_table_hidden_SG %>% knitr::kable()
+revealed_table_SG <- revealed_table_SG %>% knitr::kable()
+## Stanton x Dee Gordon
+```
+   
+```{r, echo = FALSE, include = TRUE}
+print(first_table_hidden_MB)
+```
+
+Thanks to rotowire, we can take a look at the production of some players, and I have chose these two for us to play with. If we only cared about batting average, which one would you pick? If you know me, you chose player M because you thought I am trying to trick you, and you are right. However, if you came here out of nowhere, you probably picked Player B and why shouldn't you? More than 5 points above league avg and above .300, almost 20 more hits than player M, I mean how could you not? The more he hits the better, some may say.
+
+```{r, echo = FALSE, include = TRUE}
+print(revealed_table_MB)
+```
+
+Well, you just chose Bryan Reynolds over Mike Trout. Yes, Mike Trout. And don't get me wrong, Bryan Reynolds had one hell of a rookie season in 2019, but he is no Mike Trout, the AL MVP of 2019. 
+Cool, right? And ok, that is just one comparison. But that is all it takes to prove that, high batting average does not mean a better hitter. It just means he had more hits over an amount of at bats, and it doesn't even matter about the type of hit, it values singles and home runs as the same. So if you go 3 for 5 with 3 homers, and your friend goes 4 for 4 with 4 singles, guess who would get the title for "the best hitter" in Brazil's little league, or who would be the "batting champion"? Yeah, the kid with 4 singles.
+
+## Conclusion
+I could go on and on about why batting average should be canceled, and compare it to OBP (my personal favorite), SLG, OPS, WAR, Batting Runs, wOBA and so on. However, as this is my first piece, I will keep it short, because I want to finish this asap, and also because I am still on a basic level with R and I have a small amount of tools to work with. I will leave you folks with another examples where looking solely at avg would have failed you.
+
+```{r, echo = FALSE, include = TRUE}
+print(first_table_hidden_HG)
+```
+
+```{r, echo = FALSE, include = TRUE}
+print(first_table_hidden_SG)
+```
+
+Wait for it...
+
+```{r, echo = FALSE, include = TRUE}
+print(revealed_table_HG)
+```
+
+```{r, echo = FALSE, include = TRUE}
+print(revealed_table_SG)
+```
+
+
+
+
+
+
+
