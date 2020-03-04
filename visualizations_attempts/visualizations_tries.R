@@ -6,6 +6,8 @@ library(readr)
 library(stringr)
 library(janitor)
 library(ggplot2)
+library(grid)
+library(gridExtra)
 
 combined_mlb_df <- tibble()
 for (i in 2012:2019){
@@ -42,13 +44,47 @@ harper_trout_df_300_ab <- mlb_df_300_ab %>%
 ggplot(harper_trout_df_300_ab)+
   geom_point(mapping = aes(year, rbi, color = player))
 ggplot(mlb_df_300_ab)+
-  geom_point(aes(x = r, y = obp))
+  geom_point(aes(x = r, y = slg))
 
 ggplot(mlb_df_300_ab)+
   geom_boxplot(aes(x = as.factor(team), y = slg))+
   labs(x = "team", y = "slugging")
 ggplot(mlb_df_300_ab)+
-  geom_boxplot(aes(x = as.factor(pos), y = bb_pct))
+  geom_boxplot(aes(x = as.factor(team), y = bb_pct))
+
+mlb_df_team_year <- mlb_df_300_ab %>% 
+  mutate(team_year = paste(team, year, sep='_'))
+
+ggplot(mlb_df_team_year %>% filter(year == 2012))+
+  geom_boxplot(aes(x = as.factor(team_year), y = slg))+
+  labs(x = "team per year", y = "slugging")
+
+team_stats <- mlb_df_team_year %>% 
+  group_by(team_year) %>% 
+  summarise(avg = mean(avg), obp = mean(obp), slg = mean(slg), run = sum(r), hitsPerRuns = sum(h)/sum(r))
+
+team_stats %>% ggplot()+
+  geom_point(mapping = aes(x = run, y = obp))
+
+plot_slg <- team_stats %>% ggplot()+
+  geom_point(mapping = aes(x = run, y = slg, colour = 'slg'))+
+  labs(x = "runs", y = "avg/obp/slg")
+plot_obp <- team_stats %>% ggplot()+
+  geom_point(mapping = aes(x = run, y = obp, colour = 'obp'))+
+  labs(x = "runs", y = "avg/obp/slg")
+plot_avg <- team_stats %>% ggplot()+
+  geom_point(mapping = aes(x = run, y = avg, colour = 'avg'))+
+  labs(x = "runs", y = "avg/obp/slg")
+grid.arrange(plot_slg, plot_obp, plot_avg)
+team_stats %>% ggplot()+
+  geom_point(mapping = aes(x = run, y = hitsPerRuns))
+
+
+
+
+
+
+
 
 
 
