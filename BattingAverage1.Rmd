@@ -24,33 +24,39 @@ library(janitor)
 #library(gridExtra)
 library(grid)
 library(gt)
-MVP_MLB_2012_2019 <- function(dataFrame, column = "player"){
+MVP_MLB_2010_2019 <- function(dataFrame, year, column = "player"){
   #print('passou')
   for (j in seq(1:length(dataFrame[,as.character(column)]))){
     #print('passou')
-    if (i == 2012 & dataFrame[j,"player"] %in% c('Buster Posey', 'Miguel Cabrera')){
+    if (year == 2011 & dataFrame[j,"player"] %in% c('Joey Votto', 'Josh Hamilton')){
       dataFrame[j, 'MVP'] <- T
       #print(dataFrame)
     }
-    else if (i == 2013 & dataFrame[j,as.character(column)] %in% c('Andrew McCutchen', 'Miguel Cabrera')){
+    else if (year == 2011 & dataFrame[j,"player"] %in% c('Ryan Braun', 'Justin Verlander')){
       dataFrame[j, 'MVP'] <- T
     }
-    else if (i == 2014 & dataFrame[j,as.character(column)] %in% c('Clayton Kershaw', 'Mike Trout')){
+    else if (year == 2012 & dataFrame[j,"player"] %in% c('Buster Posey', 'Miguel Cabrera')){
       dataFrame[j, 'MVP'] <- T
     }
-    else if (i == 2015 & dataFrame[j,as.character(column)] %in% c('Bryce Harper', 'Josh Donaldson')){
+    else if (year == 2013 & dataFrame[j,as.character(column)] %in% c('Andrew McCutchen', 'Miguel Cabrera')){
       dataFrame[j, 'MVP'] <- T
     }
-    else if (i == 2016 & dataFrame[j,as.character(column)] %in% c('Kris Bryant', 'Mike Trout')){
+    else if (year == 2014 & dataFrame[j,as.character(column)] %in% c('Clayton Kershaw', 'Mike Trout')){
       dataFrame[j, 'MVP'] <- T
     }
-    else if (i == 2017 & dataFrame[j,as.character(column)] %in% c('Giancarlo Stanton', 'Jose Altuve')){
+    else if (year == 2015 & dataFrame[j,as.character(column)] %in% c('Bryce Harper', 'Josh Donaldson')){
       dataFrame[j, 'MVP'] <- T
     }
-    else if (i == 2018 & dataFrame[j,as.character(column)] %in% c('Christian Yelich', 'Mookie Betts')){
+    else if (year == 2016 & dataFrame[j,as.character(column)] %in% c('Kris Bryant', 'Mike Trout')){
       dataFrame[j, 'MVP'] <- T
     }
-    else if (i == 2019 & dataFrame[j,as.character(column)] %in% c('Cody Bellinger', 'Mike Trout')){
+    else if (year == 2017 & dataFrame[j,as.character(column)] %in% c('Giancarlo Stanton', 'Jose Altuve')){
+      dataFrame[j, 'MVP'] <- T
+    }
+    else if (year == 2018 & dataFrame[j,as.character(column)] %in% c('Christian Yelich', 'Mookie Betts')){
+      dataFrame[j, 'MVP'] <- T
+    }
+    else if (year == 2019 & dataFrame[j,as.character(column)] %in% c('Cody Bellinger', 'Mike Trout')){
       dataFrame[j, 'MVP'] <- T
     }
     else{
