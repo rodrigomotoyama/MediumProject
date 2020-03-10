@@ -69,4 +69,17 @@ mlb_df_300_ab <- combined_mlb_df %>%
   mutate(bb_pct = round((bb+hbp)/pa, digits = 3), 
          so_pct = round(so/pa, digits = 3),
          babip = round(h/(ab+sf-so), digits = 3)) 
+mlb_df_300_ab
+arrange_stat_first_n <- function(dataFrame, year, n){
+  dataFrame  %>% filter(year == year) %>% arrange(desc(obp)) %>% head(n)
+}
+mlb_df_top_obp <- tibble()
+for (i in seq(2010:2019)){
+  mlb_df_top_obp_year <- arrange_stat_first_n(mlb_df_300_ab, i, 5)
+  mlb_df_top_obp <- rbind(mlb_df_top_obp, mlb_df_top_obp_year)
+}
+
+# mlb_df_top_obp_year <- arrange_stat_first_n(mlb_df_300_ab, 2010, 'obp', 5)
+mlb_df_300_ab  %>% filter(year == 2010) %>% arrange(desc(obp)) %>% head(5)
+
 
