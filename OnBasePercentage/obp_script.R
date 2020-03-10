@@ -68,6 +68,5 @@ mlb_df_300_ab <- combined_mlb_df %>%
   mutate(pa = ab+bb+sh+sf+hbp) %>% 
   mutate(bb_pct = round((bb+hbp)/pa, digits = 3), 
          so_pct = round(so/pa, digits = 3),
-         babip = round(h/(ab+sf-so), digits = 3))
-
+         babip = round(h/(ab+sf-so), digits = 3)) 
 
