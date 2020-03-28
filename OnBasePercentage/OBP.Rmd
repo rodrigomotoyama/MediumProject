@@ -6,68 +6,69 @@ output: html_document
 ---
 
 ```{r setup, include=FALSE}
-library(dplyr)
-library(tidyr)
-library(tibble)
-library(abjData)
-library(readr)
-library(stringr)
-library(janitor)
-#library(gridExtra)
-library(grid)
-library(gt)
-MVP_MLB_2012_2019 <- function(dataFrame, column = "player"){
-  #print('passou')
-  for (j in seq(1:length(dataFrame[,as.character(column)]))){
-    #print('passou')
-    if (i == 2012 & dataFrame[j,"player"] %in% c('Buster Posey', 'Miguel Cabrera')){
-      dataFrame[j, 'MVP'] <- T
-      #print(dataFrame)
-    }
-    else if (i == 2013 & dataFrame[j,as.character(column)] %in% c('Andrew McCutchen', 'Miguel Cabrera')){
-      dataFrame[j, 'MVP'] <- T
-    }
-    else if (i == 2014 & dataFrame[j,as.character(column)] %in% c('Clayton Kershaw', 'Mike Trout')){
-      dataFrame[j, 'MVP'] <- T
-    }
-    else if (i == 2015 & dataFrame[j,as.character(column)] %in% c('Bryce Harper', 'Josh Donaldson')){
-      dataFrame[j, 'MVP'] <- T
-    }
-    else if (i == 2016 & dataFrame[j,as.character(column)] %in% c('Kris Bryant', 'Mike Trout')){
-      dataFrame[j, 'MVP'] <- T
-    }
-    else if (i == 2017 & dataFrame[j,as.character(column)] %in% c('Giancarlo Stanton', 'Jose Altuve')){
-      dataFrame[j, 'MVP'] <- T
-    }
-    else if (i == 2018 & dataFrame[j,as.character(column)] %in% c('Christian Yelich', 'Mookie Betts')){
-      dataFrame[j, 'MVP'] <- T
-    }
-    else if (i == 2019 & dataFrame[j,as.character(column)] %in% c('Cody Bellinger', 'Mike Trout')){
-      dataFrame[j, 'MVP'] <- T
-    }
-    else{
-      dataFrame[j, 'MVP'] <- F
-    }  
-  }
-  return(dataFrame)
-}
-combined_mlb_df <- tibble()
-for (i in 2012:2019){
-  path_file <- paste('mlb-player-stats-Batters-', as.character(i), '.csv', sep='')
-  mlb_df <- read_csv(file = path_file)%>% clean_names()
-  df <- paste('mlb_batting_', as.character(i), sep='')
-  mlb_df <- cbind(year=i, mlb_df)
-  # MVP <- mlb_df %>% filter
-  mlb_df <- MVP_MLB_2012_2019(mlb_df)
-  combined_mlb_df <- rbind(combined_mlb_df, mlb_df)
-  assign(df, mlb_df)
-  # print(as.character(i))
-}
+# library(dplyr)
+# library(tidyr)
+# library(tibble)
+# library(abjData)
+# library(readr)
+# library(stringr)
+# library(janitor)
+# #library(gridExtra)
+# library(grid)
+# library(gt)
+# MVP_MLB_2012_2019 <- function(dataFrame, column = "player"){
+#   #print('passou')
+#   for (j in seq(1:length(dataFrame[,as.character(column)]))){
+#     #print('passou')
+#     if (i == 2012 & dataFrame[j,"player"] %in% c('Buster Posey', 'Miguel Cabrera')){
+#       dataFrame[j, 'MVP'] <- T
+#       #print(dataFrame)
+#     }
+#     else if (i == 2013 & dataFrame[j,as.character(column)] %in% c('Andrew McCutchen', 'Miguel Cabrera')){
+#       dataFrame[j, 'MVP'] <- T
+#     }
+#     else if (i == 2014 & dataFrame[j,as.character(column)] %in% c('Clayton Kershaw', 'Mike Trout')){
+#       dataFrame[j, 'MVP'] <- T
+#     }
+#     else if (i == 2015 & dataFrame[j,as.character(column)] %in% c('Bryce Harper', 'Josh Donaldson')){
+#       dataFrame[j, 'MVP'] <- T
+#     }
+#     else if (i == 2016 & dataFrame[j,as.character(column)] %in% c('Kris Bryant', 'Mike Trout')){
+#       dataFrame[j, 'MVP'] <- T
+#     }
+#     else if (i == 2017 & dataFrame[j,as.character(column)] %in% c('Giancarlo Stanton', 'Jose Altuve')){
+#       dataFrame[j, 'MVP'] <- T
+#     }
+#     else if (i == 2018 & dataFrame[j,as.character(column)] %in% c('Christian Yelich', 'Mookie Betts')){
+#       dataFrame[j, 'MVP'] <- T
+#     }
+#     else if (i == 2019 & dataFrame[j,as.character(column)] %in% c('Cody Bellinger', 'Mike Trout')){
+#       dataFrame[j, 'MVP'] <- T
+#     }
+#     else{
+#       dataFrame[j, 'MVP'] <- F
+#     }  
+#   }
+#   return(dataFrame)
+# }
+# combined_mlb_df <- tibble()
+# for (i in 2012:2019){
+#   path_file <- paste('mlb-player-stats-Batters-', as.character(i), '.csv', sep='')
+#   mlb_df <- read_csv(file = path_file)%>% clean_names()
+#   df <- paste('mlb_batting_', as.character(i), sep='')
+#   mlb_df <- cbind(year=i, mlb_df)
+#   # MVP <- mlb_df %>% filter
+#   mlb_df <- MVP_MLB_2012_2019(mlb_df)
+#   combined_mlb_df <- rbind(combined_mlb_df, mlb_df)
+#   assign(df, mlb_df)
+#   # print(as.character(i))
+# }
 ```
 
 # Introduction
-Following my [first publication](https://medium.com/@rodrigo.motoyama/batting-average-should-we-cancel-it-ade0b2c48379), I would like to talk about one of my favorite batting statistics, OBP or On Base Percentage. On this short piece I intend to cover what OBP means and measures, why it is a good statistic, where it fails, and why I think it is better than others like avg (batting average) and slg (slugging). So bear with me and let's dive in to it.
+Following my [first publication](https://medium.com/@rodrigo.motoyama/batting-average-should-we-cancel-it-ade0b2c48379), I would like to talk about one of my favorite batting statistics, OBP or On Base Percentage. Hopefully after reading this you will get hooked up on OBP as me :). I intend to cover what OBP means and measures, why it is a good statistic, where it fails, and why I think it is better than others like avg (batting average) and slg (slugging). So bear with me and let's dive in to it.
 
+![](/home/rodrigo/Downloads/moneyball.gif)
 
 
 

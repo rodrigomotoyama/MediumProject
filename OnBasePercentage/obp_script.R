@@ -5,6 +5,7 @@ library(abjData)
 library(readr)
 library(stringr)
 library(janitor)
+library(ggplot2)
 #library(gridExtra)
 library(grid)
 library(gt)
@@ -81,5 +82,29 @@ for (i in seq(2010:2019)){
 
 # mlb_df_top_obp_year <- arrange_stat_first_n(mlb_df_300_ab, 2010, 'obp', 5)
 mlb_df_300_ab  %>% filter(year == 2010) %>% arrange(desc(obp)) %>% head(5)
+
+team_obp <- mlb_df_300_ab %>% select(year, team, avg, obp) %>% 
+  group_by(year, team) %>%
+  summarise(obp = mean(obp), avg = mean(avg)) %>%
+  arrange(desc(obp), desc(avg))
+WS_mathches <- read_csv(file = 'WSwinners.csv')%>% clean_names()
+team_obp_ws <- merge(team_obp, WS_mathches, all = TRUE, by = c('year', 'team')) %>% 
+  mutate(champion = if_else(is.na(champion)|champion == F, F, T))
+team_obp_ws %>% arrange(desc(avg), desc(obp))
+for (i in 2010:2019){
+  chart <- team_obp_ws %>% filter(year == i) %>%  ggplot() +
+  geom_point(aes(x = as.factor(team), y = obp, color = champion))
+  name <- paste('vis', as.character(i), sep = '')
+  assign(name, chart)
+  name
+}
+team_obp_ws %>% filter(year == 2010) %>%  ggplot() +
+  geom_point(aes(x = as.factor(team), y = avg, color = champion))
+vis2010
+vis2011
+vis2012
+vis2013
+vis2014
+vis2015
 
 
