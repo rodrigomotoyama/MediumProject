@@ -99,7 +99,8 @@ for (i in 2010:2019){
   name
 }
 team_obp_ws %>% filter(year == 2010) %>%  ggplot() +
-  geom_point(aes(x = as.factor(team), y = avg, color = champion))
+  geom_point(aes(x = as.factor(team), y = avg, color = champion))+
+    
 vis2010
 vis2011
 vis2012
