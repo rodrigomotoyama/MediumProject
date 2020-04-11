@@ -66,7 +66,7 @@ output: html_document
 ```
 
 # Introduction
-Following my [first publication](https://medium.com/@rodrigo.motoyama/batting-average-should-we-cancel-it-ade0b2c48379), I would like to talk about one of my favorite batting statistics, OBP or On Base Percentage. Hopefully after reading this you will get hooked up on OBP as me :). I intend to cover what OBP means and measures, why it is a good statistic, where it fails, and why I think it is better than others like avg (batting average) and slg (slugging). So bear with me and let's dive in to it.
+Following my [first publication](https://medium.com/@rodrigo.motoyama/batting-average-should-we-cancel-it-ade0b2c48379), I wanna talk about one of my favorite batting statistics, OBP or On Base Percentage. Hopefully after reading this you will get hooked up on OBP as me :). I intend to cover what OBP means and measures, why it is a good statistic, where it fails, and why I think it is better than others like avg (batting average) and slg (slugging). So bear with me and let's dive in to it.
 
 ![](/home/rodrigo/Downloads/moneyball.gif)
 

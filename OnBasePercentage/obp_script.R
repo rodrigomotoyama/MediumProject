@@ -1,7 +1,6 @@
 library(dplyr)
 library(tidyr)
 library(tibble)
-library(abjData)
 library(readr)
 library(stringr)
 library(janitor)
@@ -50,6 +49,7 @@ MVP_MLB_2010_2019 <- function(dataFrame, year, column = "player"){
   }
   return(dataFrame)
 }
+################################## MVP FUNCTION #############################################
 combined_mlb_df <- tibble()
 for (i in 2010:2019){
   path_file <- paste('mlb-player-stats-Batters-', as.character(i), '.csv', sep='')
@@ -63,6 +63,26 @@ for (i in 2010:2019){
   assign(df, mlb_df)
   # print(as.character(i))
 }
+playoff_teams <- read_csv('mlb_playoffs_teams_2010_2019.csv', 
+                          col_names = c("year", "score", "matchup"))%>% 
+  mutate(series = year %>% str_sub(start = 6),
+         year = year %>% str_sub(end = 4),
+         matchup_clean = str_remove(matchup, "\\*")) %>%
+  separate(matchup_clean, sep = " vs\\. ", into = c("team1", "team2")) %>% 
+  mutate(winning_team = 
+           str_remove(team1, " \\([:digit:]{2,3}-[:digit:]{2,3}, [AN]L\\)"),
+         losing_team = 
+           str_remove(team2, " \\([:digit:]{2,3}-[:digit:]{2,3}, [AN]L\\)")) %>% 
+  select(year, series, winning_team, losing_team) %>% gather(final, team, ends_with('team')) %>% 
+  arrange(desc(year)) %>% 
+  mutate(final = final %>% str_sub(end = 1) %>% str_to_upper())
+
+teams_abreviation <- read_csv('currentAbbreviationTeamMLB.csv', col_names = c('team')) %>% 
+  separate(team, sep = " - ", into = c("name", "abb")) %>% 
+  mutate(abb = abb %>% str_sub(start = -3))
+
+playoff_teams_abb <- playoff_teams %>% left_join(teams_abreviation, by = c('team' = 'name'))
+combined_mlb_df %>% arrange(player)
 
 mlb_df_300_ab <- combined_mlb_df %>% 
   filter(ab>300) %>% 
@@ -70,6 +90,11 @@ mlb_df_300_ab <- combined_mlb_df %>%
   mutate(bb_pct = round((bb+hbp)/pa, digits = 3), 
          so_pct = round(so/pa, digits = 3),
          babip = round(h/(ab+sf-so), digits = 3)) 
+
+
+
+
+
 mlb_df_300_ab
 arrange_stat_first_n <- function(dataFrame, year, n){
   dataFrame  %>% filter(year == year) %>% arrange(desc(obp)) %>% head(n)
