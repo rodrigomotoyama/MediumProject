@@ -63,7 +63,7 @@ for (i in 2010:2019){
   assign(df, mlb_df)
   # print(as.character(i))
 }
-combined_mlb_df
+combined_mlb_df <- combined_mlb_df %>% group_by(player) %>%  mutate(age = age - (max(year) - year))
 
 playoff_teams <- read_csv('mlb_playoffs_teams_2010_2019.csv', 
                           col_names = c("year", "score", "matchup"))%>% 
@@ -83,21 +83,16 @@ teams_abreviation <- read_csv('currentAbbreviationTeamMLB.csv', col_names = c('t
   separate(team, sep = " - ", into = c("name", "abb")) %>% 
   mutate(abb = abb %>% str_sub(start = -3))
 
-combined_mlb_df <- playoff_teams %>% left_join(teams_abreviation, by = c('team' = 'name')) %>% 
-  right_join(combined_mlb_df, by = c('abb' = 'team', 'year' = 'year')) %>% 
-  mutate(series = if_else(series %>% is.na(), "Eliminated", series),
-         final = if_else(final %>% is.na(), "-", final)) %>% select(!team) %>% 
-  group_by(player) %>%  mutate(age = age - (max(year) - year))
+playoffs_teams_abb <- playoff_teams %>% left_join(teams_abreviation, by = c('team' = 'name'))
+# combined_mlb_df <- playoff_teams %>% left_join(teams_abreviation, by = c('team' = 'name')) %>% 
+#   right_join(combined_mlb_df, by = c('abb' = 'team', 'year' = 'year')) %>% 
+#   mutate(series = if_else(series %>% is.na(), "Eliminated", series),
+#          final = if_else(final %>% is.na(), "-", final)) %>% select(!team) %>% 
+#   group_by(player) %>%  mutate(age = age - (max(year) - year))
 
 playoff_teams_abb %>% group_by(player) %>%  mutate(age = age - (max(year) - year)) %>% 
   filter(player == 'Ichiro Suzuki')
 
-
-
-
-
-
-combined_mlb_df %>% arrange(player)
 
 mlb_df_300_ab <- combined_mlb_df %>% 
   filter(ab>300) %>% 
@@ -110,7 +105,30 @@ mlb_df_300_ab <- combined_mlb_df %>%
 
 
 
-mlb_df_300_ab
+OBP_MVP <- mlb_df_300_ab %>% select(year, player, obp, MVP) %>% 
+  group_by(year) %>% mutate(median_obp = median(obp), higher_obp = obp == max(obp)) %>% 
+  filter(MVP==T) %>% 
+  arrange(desc(obp)) %>% head(20)
+
+mlb_df_300_ab %>% group_by(year) %>% mutate(max_obp = max(obp)) %>% 
+  ggplot()+
+  # geom_boxplot(aes(x = as.factor(year), y = obp))+
+  geom_point(aes(x = as.factor(year), y = max_obp, color = MVP))
+  
+  OBP_MVP %>%  ggplot() +
+  geom_point(aes(x = year, y = obp, colour = higher_obp))+
+  geom_point(aes(x = year, y = median_obp, colour = 'red'))+
+  scale_color_manual(labels = c("a", "b", "c"), values = c("blue", "red", "green"))
+    # scale_fill_(name = "obp",
+  #                     labels = c("Control", "Treatment 1", "Treatment 2"))
+
+
+
+
+
+
+
+
 arrange_stat_first_n <- function(dataFrame, year, n){
   dataFrame  %>% filter(year == year) %>% arrange(desc(obp)) %>% head(n)
 }
