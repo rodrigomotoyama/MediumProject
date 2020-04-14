@@ -90,9 +90,8 @@ playoffs_teams_abb <- playoff_teams %>% left_join(teams_abreviation, by = c('tea
 #          final = if_else(final %>% is.na(), "-", final)) %>% select(!team) %>% 
 #   group_by(player) %>%  mutate(age = age - (max(year) - year))
 
-playoff_teams_abb %>% group_by(player) %>%  mutate(age = age - (max(year) - year)) %>% 
-  filter(player == 'Ichiro Suzuki')
-
+playoff_teams_abb %>% #group_by(player) %>%  mutate(age = age - (max(year) - year)) %>% 
+  filter(player == 'Ichiro Suzuki') 
 
 mlb_df_300_ab <- combined_mlb_df %>% 
   filter(ab>300) %>% 
@@ -101,9 +100,17 @@ mlb_df_300_ab <- combined_mlb_df %>%
          so_pct = round(so/pa, digits = 3),
          babip = round(h/(ab+sf-so), digits = 3)) 
 
+mlb_df_300_ab %>% select(year, player, avg, obp, bb_pct, hr) %>% 
+  group_by(year) %>% mutate(median_avg = median(avg),
+                            median_obp = median(obp),
+                            bb_pct_above_95 = quantile(bb_pct, 0.95)) %>% 
+  filter(avg<=0.250, obp>=0.350) %>%
+  arrange(desc(obp)) #%>% head(20)
 
-
-
+mlb_df_300_ab %>% select(year, player, obp, MVP) %>% 
+  group_by(year) %>% mutate(median_obp = median(obp), higher_obp = obp == max(obp)) %>% 
+  # filter(MVP==T) %>% 
+  arrange(desc(obp)) %>% head(20)
 
 OBP_MVP <- mlb_df_300_ab %>% select(year, player, obp, MVP) %>% 
   group_by(year) %>% mutate(median_obp = median(obp), higher_obp = obp == max(obp)) %>% 
@@ -115,7 +122,7 @@ mlb_df_300_ab %>% group_by(year) %>% mutate(max_obp = max(obp)) %>%
   # geom_boxplot(aes(x = as.factor(year), y = obp))+
   geom_point(aes(x = as.factor(year), y = max_obp, color = MVP))
   
-  OBP_MVP %>%  ggplot() +
+    OBP_MVP %>%  ggplot() +
   geom_point(aes(x = year, y = obp, colour = higher_obp))+
   geom_point(aes(x = year, y = median_obp, colour = 'red'))+
   scale_color_manual(labels = c("a", "b", "c"), values = c("blue", "red", "green"))
@@ -139,7 +146,7 @@ for (i in seq(2010:2019)){
 }
 
 # mlb_df_top_obp_year <- arrange_stat_first_n(mlb_df_300_ab, 2010, 'obp', 5)
-mlb_df_300_ab  %>% filter(year == 2010) %>% arrange(desc(obp)) %>% head(5)
+mlb_df_300_ab  %>% filter(year == 2010, team == "NYY") #%>% arrange(desc(obp)) %>% head(5)
 
 team_obp <- mlb_df_300_ab %>% select(year, team, avg, obp) %>% 
   group_by(year, team) %>%
