@@ -12,6 +12,9 @@ library(tibble)
 library(readr)
 library(stringr)
 library(janitor)
+library(ggplot2)
+library(kableExtra)
+
 MVP_MLB_2010_2019 <- function(dataFrame, year, column = "player"){
   #print('passou')
   for (j in seq(1:length(dataFrame[,as.character(column)]))){
@@ -88,21 +91,49 @@ The idea is simple, this is gonna tell you how many times the batter got on base
 ## Player value
 If you have read my first article, you may be thinking, "wait, doesn't batting average measure when the batter does something of value?", and you are partially correct. I say partially because batting average hides somethings from you. The average not only gives the same weight to all of the hits (singles, doubles, triples and home runs), but it also makes two "mistakes". First, it does not count walks and hit by pitches, which are scenarios where the batter gets on base safely and on merritt, and second, average is number of hits divided by at bats, not plate apparences, meaning that sacrifice flies (SF) are not taken into account. 
 Ok, but how much those "mistakes" can change the statistics? Well, thanks to rotowire we can check it out.
-```{r echo = FALSE, include=T}
+
+```{r echo = FALSE, include=F}
 table <-  mlb_df_300_ab %>% 
   group_by(year) %>% mutate(median_avg = median(avg),
                             median_obp = median(obp),
+                            quant_obp = quantile(obp, 0.90),
                             bb_pct_above_98 = quantile(bb_pct, 0.98)) %>% 
   filter(avg<=0.250, obp>=0.350) %>%  
   arrange(desc(obp)) %>% head(5)
-table %>% select(year, player, avg, median_avg) %>% arrange(desc(avg)) %>% knitr::kable()
+first_table <- table %>% select(year, player, avg, median_avg) %>% arrange(desc(avg)) %>% knitr::kable()
+grid.table(table %>% select(year, player, avg, median_avg) %>% arrange(desc(avg)))
 ```
-Cheking their batting averages alone, their seasons seem like a waste of money. All of them have avg under the median, meaning that at least 50% of the mlb players had a higher batting average than them. However, they did something amazingly good.
+
+Just by cheking their batting averages alone, their seasons seem like a waste of money. All of them had an avg under the median, meaning that at least 50% of the mlb players had a higher batting average than them. So if you try to find the value of those guys based on the avg, you won't find it. So why did I choose them? Let's ask Brad Pitt if he has something to say about these guys.
+
+![](/home/rodrigo/Downloads/moneyballIntro.gif)
+
+They get on base, people! But how often? We can check it out now!
 
 ```{r echo = FALSE, include=T}
-table %>% select(year, player, avg, obp, hr, bb_pct, "bb pct above 98" = bb_pct_above_98) %>% knitr::kable()
+table %>% select(year, player, avg, obp, quant_obp, bb_pct, "bb pct above 98" = bb_pct_above_98) %>% ggplot()+
+  geom_point(aes(x = year, y = quant_obp), color = 'blue') +
+  labs(x = 'year', y = 'OBP above 90%')+
+  ylim(0.365,0.393)
+  # scale_y_continuous(breaks = 0.005*0.365:0.380
+  #                    )
 ```
 
+These are the values of obp that were above 90% of the rest of the players that specific year. This means, for example, that in 2017, 90% of the players had an OBP lower than 0.3775 or 37.75%. So, only 10% of the players in mlb in 2017 got on base safely on merritt 37.75% or higher. Now let's see my contenders.
+
+```{r echo = FALSE, include=T}
+table %>% select(year, player, avg, obp, quant_obp, bb_pct, "bb pct above 98" = bb_pct_above_98) %>% ggplot()+
+  geom_point(aes(x = year, y = quant_obp), color = 'blue') +
+  geom_point(aes(x = year, y = obp, colour = player)) +
+  labs(x = 'year', y = 'OBP')+
+  ylim(0.365,0.393)
+```
+
+Now that is something, huh? Four of them - with the fifth one pretty close, were in the top 10% in OBP. In other words, they generated an out fewer times than at least 90% of the mlb players! Isn't that incredible? They got from a 0.25 or so batting average to a 0.37+ of OBP, just by walking!
+
+## Conclusion
+
+No, OBP is not perfect. No, OBP will not give you the MVP (believe me, I tried.) But, what I take from this is that it gives you a clear vision of some kind of a player's performance, don't you think? It gives you, with its own flaws, how often a player did something of value, not how often he/she got a hit, that is too sexy, it gives you how often a player did not generate an out, and that is the main goal, isn't it? It shouldn't matter how you step on first base safely, just get it done. If you do that, you may end up with a 20-game win streak.
 
 
 
