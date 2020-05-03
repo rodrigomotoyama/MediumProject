@@ -4,7 +4,7 @@ library(tibble)
 library(readr)
 library(stringr)
 library(janitor)
-
+library(gridExtra)
 playoff_teams <- read_csv('mlb_playoffs_teams_2010_2019.csv', 
                               col_names = c("year", "score", "matchup"))%>% 
   mutate(series = year %>% str_sub(start = 6),
